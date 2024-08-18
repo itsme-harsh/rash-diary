@@ -1,13 +1,15 @@
 import { Router } from "express"
 import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js"
-
+import { verifyJWT } from "../middleware/auth.middleware.js"
+import validate from "../middleware/validate.middleware.js"
+import { loginSchema, registerSchema } from "../validations/user.validation.js"
 const router = Router()
 
-router.post("/register", registerUser)
+router.post("/register", validate(registerSchema), registerUser)
 
-router.post("/login", loginUser)
+router.post("/login", validate(loginSchema), loginUser)
 
-router.post("/logout", logoutUser)
+router.post("/logout",verifyJWT, logoutUser)
 
 // router.post("refresh-token", refreshAccessToken)
 

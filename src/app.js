@@ -1,7 +1,10 @@
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import dotenv from "dotenv"
 import express from "express"
-
+dotenv.config({
+    path: './.env'
+})
 const app = express()
 
 app.use(cors({
@@ -22,7 +25,24 @@ import userRouter from './routes/user.route.js'
 //routes declaration
 app.use("/api/v1/users", userRouter)
 
+const isProduction = process.env.NODE_ENV == "production";
 
-// http://localhost:3000/api/v1/users/register
+app.use((err, req, res, next) => {
+    if (isProduction) {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).json({
+            success: false,
+            message: err.message || "Something went wrong"
+        });
+    } else {
+        res.status(err.statusCode || 500).json({
+            success: false,
+            message: err.message,
+            stack: err.stack,
+            errors: err.errrors
+        });
+    }
+});
+
 
 export { app }

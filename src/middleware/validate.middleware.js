@@ -1,8 +1,8 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 const validate = (schema) => asyncHandler(async (req, res, next) => {
-    console.log(req.body)
+    
     try {
         if(req.file){
             req.body.image = req.file.filename
