@@ -18,9 +18,21 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 
+// swagger will server here
+import swaggerUi from "swagger-ui-express"
+import swaggerDoc from "./utils/swaggerDoc.js"
+
+// Swagger UI options
+const options = {
+    swaggerOptions: {
+      supportedSubmitMethods: []
+    }
+  };
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
+
 //routes import
 import userRouter from './routes/user.route.js'
-
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
