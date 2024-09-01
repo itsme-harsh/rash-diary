@@ -3,7 +3,7 @@ import Joi from "joi";
 const registerSchema = Joi.object({
     avatar: Joi.string().optional(),
     coverImage: Joi.string().optional(),
-    username: Joi.string().min(3).max(30).required().messages({
+    username: Joi.string().min(5).max(30).required().messages({
         'string.base': 'Username must be a string',
         'string.empty': 'Username is required',
         'string.min': 'Username must be at least 3 characters long',

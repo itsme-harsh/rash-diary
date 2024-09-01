@@ -18,6 +18,14 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 
+//routes import
+import userRouter from './routes/user.route.js'
+
+//routes declaration
+app.use("/api/v1/users", userRouter)
+
+const isProduction = process.env.NODE_ENV == "production";
+
 // swagger will server here
 import swaggerUi from "swagger-ui-express"
 import swaggerDoc from "./utils/swaggerDoc.js"
@@ -31,13 +39,6 @@ const options = {
 
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
 
-//routes import
-import userRouter from './routes/user.route.js'
-
-//routes declaration
-app.use("/api/v1/users", userRouter)
-
-const isProduction = process.env.NODE_ENV == "production";
 
 app.use((err, req, res, next) => {
     if (isProduction) {
