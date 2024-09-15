@@ -1,10 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Login user
 export const loginUser = createAsyncThunk('auth/loginUser', async (data, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/base/api/v1/users/login', data);
+    console.log(API_URL)
+    const response = await axios.post(`{API_URL}/api/v1/users/login`, data);
 
     if (response.data.success) {
       const { user, accessToken, refreshToken } = response.data.data;
@@ -31,7 +35,7 @@ export const verifyOtp = createAsyncThunk('auth/verifyOtp', async ({ otp }, { re
       return rejectWithValue({ message: 'No user information found. Please log in again.' });
     }
 
-    const response = await axios.post('/base/api/v1/users/verify-otp', { otp, username });
+    const response = await axios.post(`{API_URL}/api/v1/users/verify-otp`, { otp, username });
 
     if (response.data.success) {
       sessionStorage.removeItem('username');
@@ -52,7 +56,7 @@ export const resendOtp = createAsyncThunk('auth/resendOtp', async (_, { rejectWi
       return rejectWithValue({ message: 'No user information found. Please log in again.' });
     }
 
-    const response = await axios.post('/base/api/v1/users/resend-otp', { username });
+    const response = await axios.post(`{API_URL}/api/v1/users/resend-otp`, { username });
 
     if (response.data.success) {
       return response.data;
