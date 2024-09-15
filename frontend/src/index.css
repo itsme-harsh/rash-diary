@@ -1,0 +1,7 @@
+/************** Login page css ****************/
+@media (max-width: 768px) {
+  .vh-100 {
+    /* Your styles here */
+    height: 90vh !important;  
+  }
+}

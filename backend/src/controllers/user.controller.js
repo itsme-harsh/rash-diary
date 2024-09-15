@@ -79,7 +79,8 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     if(!user.verified){
-        throw new ApiError(400, "Please verify your account")
+        // throw new ApiError(400, "Please verify your account")
+        return res.status(400).json(new ApiResponse(400, {}, "Please verify your account"));
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
@@ -124,9 +125,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 const verifyOTP = asyncHandler(async (req, res) => {
-    const { email, otp } = req.body;
+    const { email,username, otp } = req.body;
 
-    const user = await User.findOne({ "email": email })
+    const user = await User.findOne({ $or: [{ email }, { username }] }).select("-password -__v -role -refreshToken")
 
     if (!user) { throw new ApiError(400, "Invalid request") }
 
@@ -149,16 +150,21 @@ const verifyOTP = asyncHandler(async (req, res) => {
     const savedUser = await user.save();
     
     res.json(
-        new ApiResponse(200, savedUser.username, "User verified successfully")
+        new ApiResponse(200, savedUser, "User verified successfully")
     )
 })
 
 const resendOTP = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const { email, username } = req.body;
 
-    const user = await User.findOne({ "email": email })
+    const user = await User.findOne({ $or: [{ email }, { username }] });
+    
 
     if (!user) { throw new ApiError(400, "Invalid request") }
+    
+    if(user.verified){
+        throw new ApiError(400, "Invalid request")
+    }
 
     const otpToken = generateOtp();
 
