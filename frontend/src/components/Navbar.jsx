@@ -28,10 +28,14 @@ const Navbar = ({ toggleSidebar }) => {
     // If loading, show a loading indicator or placeholder
     if (loading) {
         return (
-        //     <div className="splash active">
-        //     <div className="splash-icon"></div>
-        //   </div>
-        <></>
+            <nav className="navbar navbar-expand navbar-theme">
+                <a className="sidebar-toggle d-flex mr-2" onClick={toggleSidebar}>
+                    <i className="hamburger align-self-center"></i>
+                </a>
+                <div className="spinner-border" role="status">
+                    <span className="sr-only"></span>
+                </div>
+            </nav>
         );
     }
 
