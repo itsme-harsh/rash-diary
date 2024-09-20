@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendRegistrationEmail } from "../utils/sendEmail.js";
 import { generateOtp } from "../utils/generateOtp.js"
+import { UserActivity } from "../models/logger.model.js";
+
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId)
@@ -71,14 +73,14 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Invalid user credentials");
     }
 
-    
+
     const isPasswordValid = await user.isPasswordCorrect(password);
-    
+
     if (!isPasswordValid) {
         throw new ApiError(401, "Invalid user credentials");
     }
 
-    if(!user.verified){
+    if (!user.verified) {
         // throw new ApiError(400, "Please verify your account")
         return res.status(400).json(new ApiResponse(400, {}, "Please verify your account"));
     }
@@ -91,6 +93,14 @@ const loginUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true
     }
+
+    await UserActivity.create({
+        userId: user._id,
+        action: "User Logged in successfully",
+        ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent']
+    })
+
 
     return res.status(200)
         .cookie("accessToken", accessToken, options)
@@ -118,6 +128,13 @@ const logoutUser = asyncHandler(async (req, res) => {
         secure: true
     }
 
+    await UserActivity.create({
+        userId: req.user._id,
+        action: "User Logged out successfully",
+        ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent']
+    })
+
     return res.status(200)
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
@@ -125,7 +142,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 const verifyOTP = asyncHandler(async (req, res) => {
-    const { email,username, otp } = req.body;
+
+    const { email, username, otp } = req.body;
 
     const user = await User.findOne({ $or: [{ email }, { username }] }).select("-password -__v -role -refreshToken")
 
@@ -138,7 +156,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     if (user.expiresAt < Date.now()) {
         throw new ApiError(400, "Your OTP has expired");
     }
-    
+
     if (user.otp !== otp) {
         throw new ApiError(400, "Wrong OTP number !!")
     }
@@ -148,7 +166,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     user.expiresAt = null
 
     const savedUser = await user.save();
-    
+
     res.json(
         new ApiResponse(200, savedUser, "User verified successfully")
     )
@@ -158,11 +176,11 @@ const resendOTP = asyncHandler(async (req, res) => {
     const { email, username } = req.body;
 
     const user = await User.findOne({ $or: [{ email }, { username }] });
-    
+
 
     if (!user) { throw new ApiError(400, "Invalid request") }
-    
-    if(user.verified){
+
+    if (user.verified) {
         throw new ApiError(400, "Invalid request")
     }
 
@@ -175,8 +193,29 @@ const resendOTP = asyncHandler(async (req, res) => {
     sendRegistrationEmail(user.email, otpToken.otp);
 
     res.json(
-        new ApiResponse(200, {}, "OTP sent successfully")
+        new ApiResponse(200, [], "OTP sent successfully")
     )
+})
+
+const getLogs = asyncHandler(async (req, res) => {
+
+    // console.log(req.body)
+    const { id } = req.body;
+
+    if (!id) {
+        throw new ApiError(400, "Invalid request")
+    }
+
+    const userActivity = await UserActivity.find({userId: id}).sort({ timestamp: -1 });
+
+    if(!userActivity){
+        throw new ApiError(400, "Invalid request")
+    }else{
+        res.json(
+            new ApiResponse(200, userActivity, "User activity sent successfully")
+        )
+    }
+
 })
 
 export {
@@ -184,6 +223,7 @@ export {
     logoutUser,
     registerUser,
     verifyOTP,
-    resendOTP
+    resendOTP,
+    getLogs
 };
 

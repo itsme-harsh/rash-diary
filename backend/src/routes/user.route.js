@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { loginUser, logoutUser, registerUser, verifyOTP, resendOTP } from "../controllers/user.controller.js"
+import { loginUser, logoutUser, registerUser, verifyOTP, resendOTP, getLogs } from "../controllers/user.controller.js"
 import { verifyJWT } from "../middleware/auth.middleware.js"
 import validate from "../middleware/validate.middleware.js"
 import { loginSchema, registerSchema } from "../validations/user.validation.js"
@@ -14,6 +14,8 @@ router.post("/logout", verifyJWT, logoutUser)
 router.post("/verify-otp", verifyOTP)
 
 router.post("/resend-otp", resendOTP)
+
+router.post("/logger", verifyJWT, getLogs)
 
 // router.post("refresh-token", refreshAccessToken)
 

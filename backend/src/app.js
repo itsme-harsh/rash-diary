@@ -21,10 +21,12 @@ app.use(cookieParser())
 //routes import
 import relationRouter from './routes/relation.route.js'
 import userRouter from './routes/user.route.js'
+import peopleRouter from "./routes/people.route.js"
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/relation", relationRouter)
+app.use("/api/v1/people", peopleRouter)
 
 const isProduction = process.env.NODE_ENV == "production";
 
@@ -62,8 +64,8 @@ const options = {
     }
   };
 
-  
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
+
+// app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
 
 export { app }
 

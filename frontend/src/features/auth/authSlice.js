@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import api from '../../app/api';
+import { toast } from 'react-toastify';
 
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -7,7 +9,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Login user
 export const loginUser = createAsyncThunk('auth/loginUser', async (data, { rejectWithValue }) => {
   try {
-    console.log(API_URL)
     const response = await axios.post(`${API_URL}/api/v1/users/login`, data);
 
     if (response.data.success) {
@@ -68,6 +69,25 @@ export const resendOtp = createAsyncThunk('auth/resendOtp', async (_, { rejectWi
   }
 });
 
+export const logger = createAsyncThunk('auth/logger', async (id, { rejectWithValue }) => {
+  try {
+      const response = await api.post(`${API_URL}/api/v1/users/logger`, { "id":id });
+      if (response.data.success) {
+          return response.data; // Make sure this returns a consistent structure
+      }
+      return rejectWithValue(response.data);
+  } catch (error) {
+      return rejectWithValue(error.response?.data || { error: 'An unexpected error occurred' });
+  }
+});
+
+export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, { dispatch }) => {
+  // Call the logout API
+  await api.post(`${API_URL}/api/v1/users/logout`); // Adjust the URL if necessary
+  dispatch(logout()); // Clear the Redux state
+  toast.success("User logged out successfully")
+});
+
 // Auth slice
 export const authSlice = createSlice({
   name: 'auth',
@@ -77,6 +97,7 @@ export const authSlice = createSlice({
     user: null,
     status: 'idle',
     error: null,
+    logs: []
   },
   reducers: {
     logout(state) {
@@ -150,7 +171,20 @@ export const authSlice = createSlice({
       .addCase(resendOtp.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload?.message || 'Failed to resend OTP';
+      })
+      .addCase(logger.pending, (state) => {
+        state.loading = true;
+        state.error = null; // Clear previous errors
+      })
+      .addCase(logger.fulfilled, (state, action) => {
+        state.loading = false;
+        state.logs.push(action.payload?.data) // Assuming you want to store the logs
+      })
+      .addCase(logger.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload; // Capture the error message
       });
+      ;
   },
 });
 

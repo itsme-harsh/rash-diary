@@ -1,7 +1,135 @@
+*,
+html,
+body {
+  font-family: "Hind Vadodara", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
+}
+
 /************** Login page css ****************/
 @media (max-width: 768px) {
   .vh-100 {
     /* Your styles here */
-    height: 90vh !important;  
+    height: 90vh !important;
   }
 }
+
+body,
+html {
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/******* dashboard-card *******/
+.custom-card-body:hover {
+  background-color: #e5e5e5;
+}
+
+/* Loader Container */
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  z-index: 9999; /* Ensure it is on top of other content */
+}
+
+/* Loader Spinner */
+.loader::before {
+  content: "";
+  border: 4px solid rgba(0, 0, 0, 0.1); /* Light border */
+  border-radius: 50%;
+  border-left-color: #007bff; /* Blue spinner color */
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  div.col.mt-0 {
+    padding: 0;
+  }
+
+  /* category table */
+  .dQcPXM {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0;
+    max-width: 100%;
+    min-width: 170px !important;
+  }
+
+  .min-1rem {
+    min-width: 8rem !important;
+  }
+
+  .pagination{
+    display: flex;
+    justify-content:center;
+  }
+}
+
+/* custom classes */
+.min-8rem {
+  min-width: 8.4rem !important;
+}
+
+.rdt_TableRow:hover {
+  background-color: #ededed !important;
+}
+
+/* modern css edited part */
+.badge-danger {
+  color: #f8285a;
+  background-color: #ffeef3;
+  font-weight: 600;
+}
+
+.badge-success {
+  color: #17c653;
+  background-color: #dfffea;
+  font-weight: 600;
+}
+
+/* data table */
+.sc-cHqXqK .ddvZdT {
+  font-weight: 500 !important;
+}
+
+@media (max-width: 576px) {
+  .navbar-expand .navbar-nav .dropdown-menu-lg {
+    min-width: 70% !important;
+    margin: 0 7px 0 0 !important;
+  }
+  .navbar-expand .navbar-nav .dropdown-menu {
+    margin: 0 7px 0 0 !important;
+  }
+}
+
+.ion-ios-arrow-dropright-circle,
+.ion-ios-arrow-dropright-circle:after,
+.ion-ios-arrow-dropright-circle:before,
+.ion-ios-arrow-dropleft-circle,
+.ion-ios-arrow-dropleft-circle:after,
+.ion-ios-arrow-dropleft-circle:before {
+  font-size: 1.2em !important;
+}
+

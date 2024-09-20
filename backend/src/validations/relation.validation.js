@@ -3,7 +3,7 @@ import Joi from 'joi';
 // Regular expression to allow only alphabetic characters and spaces
 const alphabeticPattern = /^[A-Za-z\s]+$/;
 
-const relationSchema = Joi.object({
+const relationRegisterSchema = Joi.object({
     name: Joi.string().min(3).required()
         .pattern(alphabeticPattern)
         .messages({
@@ -26,5 +26,28 @@ const relationSchema = Joi.object({
         })
 });
 
+const relationUpdateSchema = Joi.object({
+    name: Joi.string().min(3).optional()
+        .pattern(alphabeticPattern)
+        .messages({
+            'string.base': 'Name must be a string.',
+            'string.empty': 'Name cannot be empty.',
+            'string.min': 'Name must be at least 3 characters long.',
+            'string.pattern.base': 'Name must contain only alphabetic characters and spaces.',
+        }),
+
+    description: Joi.string().allow('').optional()
+        .messages({
+            'string.base': 'Description must be a string.',
+            'string.empty': 'Description can be an empty string.'
+        }),
+
+    birthdayReminder: Joi.boolean().default(false).optional()
+        .messages({
+            'boolean.base': 'Birthday reminder must be a boolean value.'
+        })
+});
+
+
 // Export the Joi schema
-export { relationSchema };
+export { relationRegisterSchema, relationUpdateSchema };

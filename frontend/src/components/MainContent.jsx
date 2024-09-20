@@ -1,158 +1,137 @@
-import React from 'react';
+// import { getRelations } from '../features/relation/relationSlice';
+import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+// import { useDispatch, useSelector } from "react-redux";
 
 // Register Chart.js elements
 Chart.register(ArcElement, Tooltip, Legend);
 
 // Register Chart.js elements
-const PieChart = () => {
+const PieChart = ({ people }) => {
+    // Prepare the data for the Pie chart
     const data = {
-        labels: ["Chrome", "Firefox", "IE", "Edge"],
+        labels: people.map(relation => relation.relationName), // Extract relation names for labels
         datasets: [
             {
-                data: [4401, 4003, 1589, 1748],
+                data: people.map(relation => relation.people.length), // Extract number of people for data
                 backgroundColor: [
-                    '#007bff', // window.theme.primary equivalent
-                    '#ffc107', // window.theme.warning equivalent
-                    '#dc3545', // window.theme.danger equivalent
-                    '#E8EAED'
+                    '#007bff', // Colors for the slices
+                    '#ffc107',
+                    '#dc3545',
+                    '#E8EAED',
+                    '#28a745', // Additional colors as needed
                 ],
                 borderColor: 'transparent',
             },
         ],
     };
 
+    // Define chart options
     const options = {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '75%',
+        cutout: '75%', // Donut style
         plugins: {
             legend: {
-                display: false,
+                display: false, // Hide legend
             },
         },
     };
 
+    // Render the Pie chart
     return <Pie data={data} options={options} />;
 };
 
-const MainContent = () => {
+
+
+const MainContent = ({ data, people }) => {
+
+    const totalPeople = people.reduce((total, relation) => {
+        return total + relation.people.length;
+    }, 0);
+
+
     return (
         <div className="container-fluid p-0 pt-5">
-            <div className="header pl-2">
+            <div className="header pl-3">
                 <h1 className="header-title">
                     Welcome to Rash-diary
                 </h1>
                 <p className="header-subtitle">Capture your ideas and create lasting memories.</p>
             </div>
             <div className="row">
-                <div className="col-xl-12 col-xxl-12 px-3 d-flex">
+                <div className="col-xl-12 col-xxl-12 d-flex">
                     <div className="w-100">
                         <div className="row">
                             <div className="col-lg-4">
                                 <div className="card">
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col mt-0">
-                                                <h5 className="card-title">Sales</h5>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="stat text-primary">
-                                                    <i className="align-middle" data-feather="truck"></i>
+                                    <Link to="/category2" style={{ textDecoration: "none" }}>
+                                        <div className="card-body custom-card-body">
+                                            <div className="row">
+                                                <div className="col mt-0">
+                                                    <h5 className="card-title">Category</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <div className="stat text-primary">
+                                                        <i className="align-middle" data-feather="book"></i>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <h1 className="mt-1 mb-3">{data.length}</h1>
+                                            <div className="mb-0">
+                                                <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i></span>
+                                                <span className="text-muted">Available categories, click to view</span>
+                                            </div>
                                         </div>
-                                        <h1 className="mt-1 mb-3">2.382</h1>
-                                        <div className="mb-0">
-                                            <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
-                                            <span className="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="col-lg-4">
                                 <div className="card">
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col mt-0">
-                                                <h5 className="card-title">Sales</h5>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="stat text-primary">
-                                                    <i className="align-middle" data-feather="truck"></i>
+                                    <Link to="/" style={{ textDecoration: "none" }}>
+                                        <div className="card-body custom-card-body">
+                                            <div className="row">
+                                                <div className="col mt-0">
+                                                    <h5 className="card-title">People</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <div className="stat text-primary">
+                                                        <i className="align-middle" data-feather="user"></i>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <h1 className="mt-1 mb-3">{totalPeople}</h1>
+                                            <div className="mb-0">
+                                                <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i></span>
+                                                <span className="text-muted">Available people, click to view</span>
+                                            </div>
                                         </div>
-                                        <h1 className="mt-1 mb-3">2.382</h1>
-                                        <div className="mb-0">
-                                            <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
-                                            <span className="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="col-lg-4">
                                 <div className="card">
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col mt-0">
-                                                <h5 className="card-title">Visitors</h5>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="stat text-primary">
-                                                    <i className="align-middle" data-feather="users"></i>
+                                    <Link to="/" style={{ textDecoration: "none" }}>
+                                        <div className="card-body custom-card-body">
+                                            <div className="row">
+                                                <div className="col mt-0">
+                                                    <h5 className="card-title">Notes</h5>
+                                                </div>
+                                                <div className="col-auto">
+                                                    <div className="stat text-primary">
+                                                        <i className="align-middle" data-feather="bookmark"></i>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <h1 className="mt-1 mb-3">14.212</h1>
-                                        <div className="mb-0">
-                                            <span className="text-success"> <i className="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
-                                            <span className="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4">
-                                <div className="card">
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col mt-0">
-                                                <h5 className="card-title">Earnings</h5>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="stat text-primary">
-                                                    <i className="align-middle" data-feather="dollar-sign"></i>
-                                                </div>
+                                            <h1 className="mt-1 mb-3">0</h1>
+                                            <div className="mb-0">
+                                                <span className="text-success"> <i className="mdi mdi-arrow-bottom-right"></i> </span>
+                                                <span className="text-muted">Available notes, click to view</span>
                                             </div>
                                         </div>
-                                        <h1 className="mt-1 mb-3">$21.300</h1>
-                                        <div className="mb-0">
-                                            <span className="text-success"> <i className="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
-                                            <span className="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4">
-                                <div className="card">
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col mt-0">
-                                                <h5 className="card-title">Orders</h5>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="stat text-primary">
-                                                    <i className="align-middle" data-feather="shopping-bag"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h1 className="mt-1 mb-3">64</h1>
-                                        <div className="mb-0">
-                                            <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
-                                            <span className="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +168,7 @@ const MainContent = () => {
             </div>
 
             <div className="row">
-                <div className="col-xl-12">
+                {/* <div className="col-xl-6">
                     <div className="card flex-fill">
                         <div className="card-header">
                             <div className="card-actions float-right">
@@ -262,11 +241,11 @@ const MainContent = () => {
                                     <td className="d-none d-md-table-cell">80</td>
                                     <td>$3,999.00</td>
                                 </tr>
-                                {/* Add more rows as necessary */}
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> */}
+
                 {/* <div className="col-xl-4">
                     <div className="card flex-fill">
                         <div className="card-header">
@@ -285,34 +264,30 @@ const MainContent = () => {
                 <div className="col-12 col-lg-6 col-xxl-3 d-flex">
                     <div className="card flex-fill">
                         <div className="card-header">
-                            <h5 className="card-title mb-0">Browser Usage</h5>
+                            <h5 className="card-title mb-0">Category</h5>
                         </div>
                         <div className="card-body d-flex">
                             <div className="align-self-center w-100">
                                 <div className="py-3">
                                     <div className="chart chart-xs">
                                         {/* Add chart here */}
-                                        <PieChart />
+                                        <PieChart people={people} />
                                     </div>
                                 </div>
                                 <table className="table mb-0">
                                     <tbody>
-                                        <tr>
-                                            <td>Chrome</td>
-                                            <td className="text-right">43%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Firefox</td>
-                                            <td className="text-right">32%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>IE</td>
-                                            <td className="text-right">15%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Edge</td>
-                                            <td className="text-right">10%</td>
-                                        </tr>
+                                        {
+                                        people.map((relation) => {
+                                            const peopleCount = relation.people.length;
+                                            const percentage = totalPeople > 0 ? ((peopleCount / totalPeople) * 100).toFixed(2) : 0;
+
+                                            return (
+                                                <tr key={relation.relationId}>
+                                                    <td>{relation.relationName}</td>
+                                                    <td className="text-right">{percentage}%</td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>

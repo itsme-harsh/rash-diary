@@ -1,140 +1,160 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { getRelations } from '../features/relation/relationSlice';
+import { toast } from 'react-toastify';
 
-// Sample data
-const clients = [
-    { id: 1, name: 'Garrett Winters', company: 'Good Guys', email: 'garrett@winters.com', status: 'Active' },
-    { id: 2, name: 'Ashton Cox', company: 'Levitz Furniture', email: 'ashton@cox.com', status: 'Active' },
-    { id: 3, name: 'Sonya Frost', company: 'Child World', email: 'sonya@frost.com', status: 'Inactive' },
-    { id: 4, name: 'Jena Gaines', company: 'Helping Hand', email: 'jena@gaines.com', status: 'Inactive' },
-    { id: 5, name: 'Garrett Winters', company: 'Good Guys', email: 'garrett@winters.com', status: 'Active' },
-    { id: 6, name: 'Ashton Cox', company: 'Levitz Furniture', email: 'ashton@cox.com', status: 'Active' },
-    { id: 7, name: 'Sonya Frost', company: 'Child World', email: 'sonya@frost.com', status: 'Inactive' },
-    { id: 8, name: 'Jena Gaines', company: 'Helping Hand', email: 'jena@gaines.com', status: 'Inactive' },
-    // { id: 8, name: 'Jena Gaines', company: 'Helping Hand', email: 'jena@gaines.com', status: 'Inactive', avatar: 'img/avatars/avatar.jpg' },
-];
 
-const handleUpdate = (id) =>{
-    alert(id)
-}
 
-const handleDelete = (id) =>{
-    alert(id)
-}
+const CategoryTable = ({ onView }) => {
+    const handleUpdate = (id) => {
+        toast.success("Category updated successfully");
+    };
 
-const columns = [
-    {
-        name: 'No.',
-        selector: row => row.id,
-        sortable: true,
-        width: '80px'
-    },
-    // {
-    //     name: '#',
-    //     cell: row => (
-    //         <img
-    //             src={row.avatar}
-    //             width="32"
-    //             height="32"
-    //             className="rounded-circle my-n1"
-    //             alt="Avatar"
-    //         />
-    //     ),
-    //     width: '60px'
-    // },
-    {
-        name: 'Name',
-        selector: row => row.name,
-        sortable: true,
-    },
-    {
-        name: 'Company',
-        selector: row => row.company,
-        sortable: true,
-    },
-    {
-        name: 'Email',
-        selector: row => row.email,
-        sortable: true,
-    },
-    {
-        name: 'Status',
-        cell: row => (
-            <span className={`badge badge-${row.status === 'Active' ? 'success' :  'danger' }`}>
-                {row.status}
-            </span>
-        ),
-        sortable: true,
-    },
-    {
-        name: 'action',
-        cell: row => (
-            <>
-            <button
-                type="button"
-                className="btn btn-sm"
-                onClick={() => handleUpdate(row.id)} // Replace with your delete handler
-            >
-                <i className="align-middle fas fa-fw fa-pen"></i>
-            </button>
-            &nbsp;&nbsp;
-            <button
-                type="button"
-                className="btn btn-sm"
-                onClick={() => handleDelete(row.id)} // Replace with your delete handler
-            >
-                <i className="align-middle fas fa-fw fa-trash"></i>
-            </button>
-            </>
-        )
-    }
-];
+    const handleDelete = (id) => {
+        toast.error("Category deleted successfully");
+    };
 
-const CategoryTable = () => {
+    const handleView = (item, onView) => {
+        onView(item); // Pass the selected item to the onView callback
+        toast.info("Preview Retrieved successfully");
+    };
+
+    const columns = [
+        {
+            name: 'No.',
+            selector: (row, index) => index + 1,
+            sortable: false,
+            width: '50px',
+        },
+        {
+            name: 'Name',
+            selector: row => row.name,
+            sortable: true,
+            width: '90px'
+        },
+        {
+            name: 'Description',
+            selector: row => row.description || 'No description',
+            sortable: true,
+        },
+        {
+            name: 'Birthday Reminder',
+            selector: row => (
+                <span className={`badge ${row.birthdayReminder ? 'badge-success' : 'badge-danger'}`}>
+                    {row.birthdayReminder ? 'Active' : 'Inactive'}
+                </span>
+            ),
+            sortable: true,
+        },
+        {
+            name: 'Created At',
+            selector: row => new Date(row.createdAt).toLocaleString(),
+            sortable: true,
+        },
+        {
+            name: 'Updated At',
+            selector: row => new Date(row.updatedAt).toLocaleString(),
+            sortable: true,
+        },
+        {
+            name: 'Action',
+            cell: row => (
+                <div className="card-actions float-right">
+                    <div className="d-inline-block dropdown show">
+                        <a href="#" data-toggle="dropdown" data-display="static">
+                            <svg style={{ width: "31px" }} xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="feather feather-more-vertical align-middle"><circle cx={12} cy={12} r={1} /><circle cx={12} cy={5} r={1} /><circle cx={12} cy={19} r={1} /></svg>
+                        </a>
+                        <div className="dropdown-menu dropdown-menu-right min-1rem min-8rem"
+                            style={{ padding: "0px", position: "absolute", right: "0px", top: "-30px" }}
+                        >
+                            <span>
+                                <button type="button" className="btn btn-sm pr-1" onClick={() => handleUpdate(row._id)}>
+                                    <i className="align-middle fas bg-primary py-2 px-2 fas text-white fa-pen"></i>
+                                </button>
+                            </span>
+                            <span>
+                                <button type="button" className="btn btn-sm pr-1" onClick={() => handleDelete(row._id)}>
+                                    <i className="align-middle bg-danger py-2 px-2 fas text-white fa-trash"></i>
+                                </button>
+                            </span>
+                            <span>
+                                <button type="button" className="btn btn-sm pr-1" onClick={() => handleView(row, onView)}>
+                                    <i className="align-middle fas bg-primary py-2 px-2 fas text-white fa-eye"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            ),
+            width: '90px'
+        }
+    ];
+    const dispatch = useDispatch();
+    const { relations, status, error } = useSelector((state) => state.relations);
+
+    useEffect(() => {
+        dispatch(getRelations());
+    }, [dispatch]);
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    // if (status === 'loading') {
+    //     return (
+    //         <div className="col-12 col-xl-12 text-center">
+    //             <div id="loader" className="loader"></div>
+    //         </div>
+    //     );
+    // }
+
+    if (status === 'failed') {
+        return (
+            <div className="col-12 text-center">
+                <p>Error: {error}</p>
+            </div>
+        );
+    }
+
     return (
         <>
-            {show ? <><div className="modal fade show d-block absolute" tabIndex="-1" role="dialog" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content border">
-                        <div className="modal-header">
-                            <h5 className="modal-title">ADD Node</h5>
-                            <button type="button" className="close" onClick={handleClose} aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body m-3">
-                            <p className="mb-0">
-                                Use Bootstrap’s JavaScript modal plugin to add dialogs to your site for lightboxes, user notifications, or completely custom content.
-                            </p>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={handleClose}>
-                                Close
-                            </button>
-                            <button type="button" className="btn btn-primary">
-                                Save
-                            </button>
+            {show && (
+                <div className="modal fade show d-block absolute" tabIndex="-1" role="dialog" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content border">
+                            <div className="modal-header">
+                                <h5 className="modal-title">ADD Relation</h5>
+                                <button type="button" className="close" onClick={handleClose} aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body m-3">
+                                <p className="mb-0">
+                                    Add your custom content here for adding relations.
+                                </p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                                    Close
+                                </button>
+                                <button type="button" className="btn btn-primary">
+                                    Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div></> : ""}
-
-
+            )}
 
             <div className="card">
                 <div className="card-header">
                     <div className="card-actions float-right">
-                        {/* <a href="#" className="mr-1">
-                        <i className="align-middle" data-feather="refresh-cw"></i>
-                    </a> */}
                         <div className="d-inline-block dropdown show">
-                            <a href="#" data-toggle="dropdown" data-display="static">
-                                <i className="align-middle" data-feather="more-vertical"></i>
-                            </a>
+                            {/* <a href="#" data-toggle="dropdown" data-display="static">
+                                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="feather feather-more-vertical align-middle"><circle cx={12} cy={12} r={1} /><circle cx={12} cy={5} r={1} /><circle cx={12} cy={19} r={1} /></svg>
+                            </a> */}
                             <div className="dropdown-menu dropdown-menu-right" style={{ position: "absolute", right: "15px", top: "3px" }}>
                                 <a className="dropdown-item" onClick={handleShow} href="#">ADD</a>
                             </div>
@@ -145,14 +165,14 @@ const CategoryTable = () => {
                 <div className="card-body">
                     <DataTable
                         columns={columns}
-                        data={clients}
+                        data={relations}
                         responsive
-                        defaultSortFieldId={1} // Sorting by the second column by default
+                        defaultSortFieldId={1}
                     />
                 </div>
             </div>
         </>
     );
-}
+};
 
 export default CategoryTable;

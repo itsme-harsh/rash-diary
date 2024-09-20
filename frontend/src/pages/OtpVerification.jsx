@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { toast } from 'react-toastify';
-import { resendOtp, verifyOtp } from '../features/auth/authSlice';
+import { verifyOtp, resendOtp } from '../features/auth/authSlice';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 export default function OtpVerification() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -67,7 +67,7 @@ export default function OtpVerification() {
       const action = await dispatch(verifyOtp({ otp: otpCode, username }));
 
       if (verifyOtp.fulfilled.match(action)) {
-        toast.success('Account verified successfully');
+        toast.success('Account verified successfully. Please log in again...');
         // No need for timeout; navigate should happen automatically if isVerified updates
       } else {
         toast.error(action.payload?.message || 'OTP verification failed');

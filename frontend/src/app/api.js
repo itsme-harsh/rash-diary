@@ -1,9 +1,7 @@
 import axios from 'axios';
-import { logout } from '../features/auth/authSlice'; // Import the action
-import { useDispatch } from 'react-redux';
 
 const api = axios.create({
-  baseURL: '/base/api/v1',
+  baseURL: import.meta.env.VITE_API_URL, // Ensure this is correct
 });
 
 // Request interceptor to add the token to headers
@@ -18,39 +16,43 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const dispatch = useDispatch()
-    const { config, response: { status } } = error;
-    const originalRequest = config;
+    const originalRequest = error.config;
 
-    if (status === 401) { // Unauthorized
+    if (error.response && error.response.status === 401) {
+      // Get refresh token from local storage
       const refreshToken = localStorage.getItem('RefreshToken');
-      
+
       if (refreshToken) {
         try {
-          // Make a request to refresh the token
-          const res = await axios.post('/base/api/v1/users/refresh-token', { refreshToken });
-          
-          const { accessToken, refreshToken: newRefreshToken } = res.data.data;
-          
-          // Update tokens in localStorage
+          // Attempt to refresh the access token
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/refresh-token`, { token: refreshToken });
+          const { accessToken } = response.data;
+
+          // Save the new access token to local storage
           localStorage.setItem('Token', accessToken);
-          localStorage.setItem('RefreshToken', newRefreshToken);
-          
-          // Update the original request with the new token
+
+          // Set the new access token in the original request
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+          // Retry the original request
           return api(originalRequest);
         } catch (refreshError) {
-          // Handle refresh token failure
-          dispatch(logout()); // Dispatch logout action
+          // If refresh fails, log out the user
+          localStorage.removeItem('Token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('RefreshToken');
+          // Redirect to login or show a message
+          // e.g., window.location.href = '/login';
           return Promise.reject(refreshError);
         }
       } else {
-        // No refresh token available; log out
-       dispatch(logout()); // Dispatch logout action
+        // No refresh token available, log out the user
+        localStorage.removeItem('Token');
+        // Redirect to login or show a message
+        // e.g., window.location.href = '/login';
         return Promise.reject(error);
       }
     }

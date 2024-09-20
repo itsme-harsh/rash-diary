@@ -32,4 +32,7 @@ const peopleSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Unique compound index on relationId and name
+peopleSchema.index({ relationId: 1, name: 1 }, { unique: true });
+
 export const People = mongoose.model('People', peopleSchema);

@@ -24,7 +24,9 @@ export default function Login() {
     if (isLoggedIn && !isVerified) {
       navigate('/verify-otp'); // Redirect to OTP verification page
     } else if (isLoggedIn && isVerified) {
-      navigate('/dashboard'); // Redirect to dashboard if verified
+      setTimeout(()=>{
+        navigate('/dashboard'); // Redirect to dashboard if verifie
+      },1000)
     }
   }, [isLoggedIn, isVerified, navigate]);
 

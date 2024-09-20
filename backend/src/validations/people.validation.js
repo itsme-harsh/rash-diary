@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 // Define the Joi schema for validating People documents
-const peopleSchema = Joi.object({
+const peopleRegisterSchema = Joi.object({
   name: Joi.string()
     .pattern(/^[A-Za-z\s]+$/)  // Regular expression to allow only letters and spaces
     .required()
@@ -53,5 +53,5 @@ const peopleSchema = Joi.object({
 });
 
 export {
-    peopleSchema
+  peopleRegisterSchema
 }

@@ -20,4 +20,7 @@ const relationSchema = new Schema({
   }
 }, { timestamps: true }); 
 
+// Unique compound index on userId and name
+// relationSchema.index({ userId: 1, name: 1 }, { unique: true });
+
 export const Relation = mongoose.model("Relation", relationSchema);

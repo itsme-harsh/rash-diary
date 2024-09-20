@@ -1,0 +1,39 @@
+userSchema    
+        _id
+        username: 
+        email: 
+        password: 
+        role: 
+        verified: 
+        refreshToken: 
+        otp: 
+        expiresAt: 
+        timestamps:
+
+relationSchema
+        _id:
+        userId:
+        name:
+        description:
+        birthdayReminder:
+        timestamps:
+
+peopleSchema
+        name: 
+        relationId: 
+        dob: 
+        reminder:
+        status: 
+        type: 
+        city:
+
+1> userSchema._id = relationSchema.userId
+2> relationSchema._id = peopleSchema.relationId
+
+// Fetching relations and associated people for a specific userId
+Relation.find({ userId })
+  .populate({
+    path: 'people', // Assuming you set up virtual populate in relationSchema
+    model: 'People',
+  })
+  .exec();

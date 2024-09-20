@@ -52,7 +52,28 @@ const registerRelation = asyncHandler(async (req, res) => {
 
 })
 
+const updateRelation = asyncHandler(async (req, res) => {
+    const relationId = req.params.id;
+
+    const isExist = Relation.findById(relationId)
+
+    if (!isExist) {
+        throw new ApiError(404, "Relation doesn't exists")
+    }
+
+    const updatedRelation = await Relation.findByIdAndUpdate(relationId, req.body, {
+        new: true, // Return the updated document
+        runValidators: true, // Validate before updating
+    });
+
+    res.status(200).json(
+        new ApiResponse(200, updatedRelation, "Relation updated successfully")
+    );
+
+})
+
 export {
     getRelations,
-    registerRelation
+    registerRelation,
+    updateRelation
 };

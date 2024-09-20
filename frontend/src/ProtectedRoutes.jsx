@@ -9,9 +9,8 @@ const ProtectedRoute = ({ children }) => {
         return 'loading...'; // Optionally, you can show a loading spinner or message
     }
     
-console.log(isLoggedIn,isVerified)
+// console.log(isLoggedIn,isVerified)
     if (!(isLoggedIn || isVerified)) {
-        console.log("ok")
         return <Navigate to="/" />;
     }
 

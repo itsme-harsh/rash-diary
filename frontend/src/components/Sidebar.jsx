@@ -60,27 +60,33 @@ const Sidebar = ({ isOpen }) => {
 
                     <li className="sidebar-item">
                         <Link className="sidebar-link" to="/">
-                            <i className="align-middle" data-feather="check-square"></i> <span className="align-middle">Forms</span>
+                        <i className="align-middle" data-feather="users"></i><span className="ml-1 align-middle">People</span>
                         </Link>
                     </li>
 
                     <li className="sidebar-item">
+                        <Link className="sidebar-link" to="/settings">
+                            <i className="align-middle" data-feather="settings"></i> <span className="align-middle">Settings</span>
+                        </Link>
+                    </li>
+
+                    {/* <li className="sidebar-item">
                         <Link className="sidebar-link" to="/">
                             <i className="align-middle" data-feather="list"></i> <span className="align-middle">Tables</span>
                         </Link>
-                    </li>
+                    </li> */}
 
-                    <li className="sidebar-item">
+                    {/* <li className="sidebar-item">
                         <Link className="sidebar-link" to="/">
                             <i className="align-middle" data-feather="grid"></i> <span className="align-middle">Cards</span>
                         </Link>
-                    </li>
+                    </li> */}
 
-                    <li className="sidebar-header">
+                    {/* <li className="sidebar-header">
                         Extras
-                    </li>
+                    </li> */}
 
-                    <li className="sidebar-item">
+                    {/* <li className="sidebar-item">
                         <Link className="sidebar-link" to="/">
                             <i className="align-middle" data-feather="settings"></i> <span className="align-middle">Settings</span>
                         </Link>
@@ -88,15 +94,9 @@ const Sidebar = ({ isOpen }) => {
 
                     <li className="sidebar-item">
                         <Link className="sidebar-link" to="/">
-                            <i className="align-middle" data-feather="user"></i> <span className="align-middle">Profile</span>
-                        </Link>
-                    </li>
-
-                    <li className="sidebar-item">
-                        <Link className="sidebar-link" to="/">
                             <i className="align-middle" data-feather="help-circle"></i> <span className="align-middle">Help</span>
                         </Link>
-                    </li>
+                    </li> */}
                 </ul>
             </div>
         </nav>
