@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logger } from '../features/auth/authSlice';
-import MessageDropdown from "./MessageDropdown";
 import AlertDropdown from './AlertDropdown';
-import SettingDropdown from './SettingDropdown';
 import FullScreen from './FullScreen';
+import MessageDropdown from "./MessageDropdown";
+import SettingDropdown from './SettingDropdown';
 
 const Navbar = ({ toggleSidebar }) => {
     const dispatch = useDispatch();
@@ -28,14 +28,9 @@ const Navbar = ({ toggleSidebar }) => {
     // If loading, show a loading indicator or placeholder
     if (loading) {
         return (
-            <nav className="navbar navbar-expand navbar-theme">
-                <a className="sidebar-toggle d-flex mr-2" onClick={toggleSidebar}>
-                    <i className="hamburger align-self-center"></i>
-                </a>
-                <div className="spinner-border" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-            </nav>
+            <div className="splash active">
+            <div className="splash-icon"></div>
+          </div>
         );
     }
 
