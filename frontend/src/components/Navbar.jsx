@@ -28,9 +28,10 @@ const Navbar = ({ toggleSidebar }) => {
     // If loading, show a loading indicator or placeholder
     if (loading) {
         return (
-            <div className="splash active">
-            <div className="splash-icon"></div>
-          </div>
+        //     <div className="splash active">
+        //     <div className="splash-icon"></div>
+        //   </div>
+        <></>
         );
     }
 
