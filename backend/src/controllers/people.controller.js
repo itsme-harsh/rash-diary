@@ -4,9 +4,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { People } from "../models/people.model.js";
 import mongoose from "mongoose";
+import crypto from 'crypto'
 
 const getPeople = asyncHandler(async (req, res) => {
-    
+
     const { relationId } = req.params;
 
     const relation = await Relation.findById(relationId);
@@ -30,6 +31,14 @@ const getPeople = asyncHandler(async (req, res) => {
 
 const getAllPeople = asyncHandler(async (req, res) => {
     const userId = req.user._id; // Ensure this is correctly set from authentication middleware
+
+    // const secretKey = crypto.randomBytes(16).toString('hex');
+
+  
+    // const uniqueLink = `${req.protocol}://${req.get('host')}/person/${secretKey}`
+    // console.log(uniqueLink)
+
+
 
     if (!userId) {
         throw new ApiError(400, "Invalid request");
@@ -73,7 +82,8 @@ const getAllPeople = asyncHandler(async (req, res) => {
                         reminder: 1,
                         status: 1,
                         type: 1,
-                        city: 1
+                        city: 1,
+                        profile: 1
                     }
                 }
             }
@@ -93,6 +103,8 @@ const getAllPeople = asyncHandler(async (req, res) => {
 const registerPeople = asyncHandler(async (req, res) => {
     const { relationId, name } = req.body;
 
+    // console.log(req.file.filename)
+
     // Check if the relation exists
     const relation = await Relation.findById(relationId);
     if (!relation) {
@@ -105,6 +117,7 @@ const registerPeople = asyncHandler(async (req, res) => {
         throw new ApiError(409, "Person with the same name already exists in this relation.");
     }
 
+    // console.log(req.body)
     const newPeople = await People.create(req.body)
 
     const createdPeople = await People.findById(newPeople._id).select("-__v")
@@ -124,8 +137,8 @@ const updatePeople = asyncHandler(async (req, res) => {
 })
 
 const deletePeople = asyncHandler(async (req, res) => {
+    
     const { peopleId, relationId } = req.body;
-
     // Check if the person exists with the given peopleId and relationId
     const isExist = await People.findOne({ _id: peopleId, relationId: relationId });
     if (!isExist) {
@@ -134,11 +147,13 @@ const deletePeople = asyncHandler(async (req, res) => {
 
     // Delete the person
     const response = await People.deleteOne({ _id: peopleId, relationId: relationId });
-
-    res.status(200).json({
-        success: true,
-        message: "Person deleted successfully."
-    });
+    if (response.deletedCount === 1) {
+        res.status(200).json(
+            new ApiResponse(200, {}, "People deleted successfully.")
+        );
+    } else {
+        throw new ApiError(500, "Something went wrong while deleting...")
+    }
 })
 
 export {

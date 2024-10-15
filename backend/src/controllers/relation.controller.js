@@ -40,7 +40,7 @@ const registerRelation = asyncHandler(async (req, res) => {
 
     const savedRelation = await Relation.create({ ...req.body, userId: userId })
 
-    const checkRelation = await Relation.findById(savedRelation._id).select("-_id -userId -__v")
+    const checkRelation = await Relation.findById(savedRelation._id).select(" -userId -__v")
 
     if (!checkRelation) {
         throw new ApiError(500, "Something went wrong while creating relation")
@@ -53,27 +53,65 @@ const registerRelation = asyncHandler(async (req, res) => {
 })
 
 const updateRelation = asyncHandler(async (req, res) => {
-    const relationId = req.params.id;
+    const relationId = req.params.relationId;
 
-    const isExist = Relation.findById(relationId)
+    // Extract the updated name from the request body
+    const { name } = req.body;
 
-    if (!isExist) {
-        throw new ApiError(404, "Relation doesn't exists")
-    }
-
-    const updatedRelation = await Relation.findByIdAndUpdate(relationId, req.body, {
-        new: true, // Return the updated document
-        runValidators: true, // Validate before updating
+    // Check if the relation exists before attempting to update it
+    const existingRelation = await Relation.findOne({ 
+        name: name,
+        _id: { $ne: relationId } // Ensure we're not matching the current relation being updated
     });
 
+    if (existingRelation) {
+        throw new ApiError(400, "Relation name already exists");
+    }
+
+    // Perform the update
+    const updatedRelation = await Relation.findByIdAndUpdate(relationId, req.body, {
+        new: true,
+        runValidators: true, // Validate before update
+    });
+
+    // If no document was found, updatedRelation will be null
+    if (!updatedRelation) {
+        throw new ApiError(404, "Relation doesn't exist");
+    }
+
+    // Respond with the updated relation
     res.status(200).json(
         new ApiResponse(200, updatedRelation, "Relation updated successfully")
     );
+});
 
-})
+
+const deleteRelation = asyncHandler(async (req, res) => {
+    const { relationId } = req.params; // Get relationId from URL parameter
+
+    if (!relationId) {
+        throw new ApiError(400, "Invalid relation id");
+    }
+
+    const isExistRelation = await Relation.findById(relationId);
+
+    if (!isExistRelation) {
+        throw new ApiError(400, "No relation exists");
+    }
+
+    // This will trigger the pre('remove') middleware to delete related people
+    await Relation.findByIdAndDelete(relationId);
+
+    res.status(200).json(
+        new ApiResponse(200, {}, "Relation and associated people deleted successfully")
+    );
+});
+
+
 
 export {
     getRelations,
     registerRelation,
-    updateRelation
+    updateRelation,
+    deleteRelation
 };

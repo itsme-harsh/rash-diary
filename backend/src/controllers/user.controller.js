@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendRegistrationEmail } from "../utils/sendEmail.js";
 import { generateOtp } from "../utils/generateOtp.js"
 import { UserActivity } from "../models/logger.model.js";
+import jwt from 'jsonwebtoken';
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -33,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
         if (existedUser.verified) {
             throw new ApiError(409, "User with this email or username already exists");
         } else {
-            throw new ApiError(400, "Please verify your account");
+            return res.status(400).json(new ApiResponse(400, existedUser.username, "Please verify your account"));
         }
     }
 
@@ -86,7 +87,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-
+    
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken -role -otp -expiresAt");
 
     const options = {
@@ -123,7 +124,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         }
     )
 
-    const options = {
+    const options = {   
         httpOnly: true,
         secure: true
     }
@@ -206,11 +207,11 @@ const getLogs = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid request")
     }
 
-    const userActivity = await UserActivity.find({userId: id}).sort({ timestamp: -1 });
+    const userActivity = await UserActivity.find({ userId: id }).sort({ timestamp: -1 });
 
-    if(!userActivity){
+    if (!userActivity) {
         throw new ApiError(400, "Invalid request")
-    }else{
+    } else {
         res.json(
             new ApiResponse(200, userActivity, "User activity sent successfully")
         )
@@ -218,12 +219,75 @@ const getLogs = asyncHandler(async (req, res) => {
 
 })
 
+const currentUser = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    if (!userId) {
+        throw ApiError(400, "Invalid request")
+    }
+    const user = await User.findById(userId).select("-otp -__v -expiresAt -refreshToken -_id -role -password")
+
+    if (!user) {
+        throw ApiError(500, "Something went wrong while fetching current user")
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, user, "User details fetched successfully")
+    )
+})
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+    if (!incomingRefreshToken) {
+        throw new ApiError(401, "Unauthorized request");
+    }
+
+    try {
+        // Verify the refresh token
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+        // Find the user by the decoded token's user ID
+        const user = await User.findById(decodedToken?._id);
+        if (!user) {
+            throw new ApiError(401, "Invalid refresh token");
+        }
+
+        // Check if the incoming refresh token matches the one stored in the database
+        if (incomingRefreshToken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or invalid");
+        }
+
+        // Generate new tokens
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
+        // Set secure cookies for access and refresh tokens
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true
+        };
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
+            .json(
+                new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed")
+            );
+
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid refresh token");
+    }
+});
+
+
 export {
     loginUser,
     logoutUser,
     registerUser,
     verifyOTP,
     resendOTP,
-    getLogs
+    getLogs,
+    currentUser,
+    refreshAccessToken
 };
 

@@ -21,11 +21,9 @@ const peopleRegisterSchema = Joi.object({
       'any.required': 'Relation ID is required.'
     }),
   dob: Joi.date()
-    .iso()
     .optional()
     .messages({
       'date.base': 'Date of birth must be a valid date.',
-      'date.isoDate': 'Date of birth must be a valid ISO date format.'
     }),
   reminder: Joi.boolean()
     .default(true)
@@ -49,7 +47,9 @@ const peopleRegisterSchema = Joi.object({
     .messages({
       'string.base': 'City must be a string.',
       'string.pattern.base': 'City cannot contain numbers.'
-    })
+    }),
+  profile: Joi.string()
+    .optional()
 });
 
 export {

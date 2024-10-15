@@ -3,6 +3,7 @@ import { getPeople, getAllPeople, registerPeople, updatePeople, deletePeople } f
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import validate from "../middleware/validate.middleware.js";
 import { peopleRegisterSchema } from "../validations/people.validation.js"
+import { upload } from "../middleware/multer.middlware.js";
 
 const router = Router()
 
@@ -12,7 +13,7 @@ router.get('/:relationId', verifyJWT, getPeople);
 
 router.get("/", verifyJWT, getAllPeople)
 
-router.post("/", verifyJWT, validate(peopleRegisterSchema), registerPeople)
+router.post("/", verifyJWT, upload.single('profile'), validate(peopleRegisterSchema), registerPeople)
 
 router.put("/", verifyJWT, updatePeople)
 

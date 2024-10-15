@@ -3,6 +3,7 @@ import connectDB from "./database/config.js";
 
 // cron-task
 import keepAlive from "./cron/keepAlive.js";
+// import './cron/checkBirthday.cron.js';
 
 connectDB()
     .then(() => {

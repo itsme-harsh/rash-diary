@@ -85,8 +85,26 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, { dispat
   // Call the logout API
   await api.post(`${API_URL}/api/v1/users/logout`); // Adjust the URL if necessary
   dispatch(logout()); // Clear the Redux state
+  dispatch({ type: 'global/reset' }); // Dispatch global reset action to clear all states
   toast.success("User logged out successfully")
 });
+
+//-----------------------------------------------------------------------------------------------------
+//------------------------------------ Register user --------------------------------------------------
+//-----------------------------------------------------------------------------------------------------
+export const registerUser = createAsyncThunk('auth/registerUser', async (data, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/users/register`, data);
+    if (response.data.success) {
+      return response.data.data; // Return user data for further use if needed
+    } else {
+      return rejectWithValue(response.data);
+    }
+  } catch (error) {
+    return rejectWithValue(error.response?.data || { message: 'An unexpected error occurred during registration' });
+  }
+});
+
 
 // Auth slice
 export const authSlice = createSlice({
@@ -183,8 +201,21 @@ export const authSlice = createSlice({
       .addCase(logger.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload; // Capture the error message
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.isLoggedIn = false; // User is logged in after registration
+        state.isVerified = action.payload.verified; // Set verification status
+        state.user = action.payload; // Store user data
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload?.message || 'Registration failed';
       });
-      ;
   },
 });
 

@@ -1,35 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import Sidebar from '../components/Sidebar'
-import Navbar from '../components/Navbar'
-import MainContent from '../components/MainContent'
-import { useDispatch, useSelector } from 'react-redux';
-import { getRelations } from '../features/relation/relationSlice';
-import { getAllPeople } from '../features/people/peopleSlice';
+// Dashboard.js
+import React, { useEffect } from 'react';
+import MainContent from '../components/MainContent';
+// import Layout from './Layout';
+import useFetchDashboardData from '../hooks/DashboardHook';
+import Layout from './Layout';
 
-export default function Dashboard() {
+const Dashboard = () => {
+  const { relations, people, isLoading } = useFetchDashboardData();
 
-  const dispatch = useDispatch();
-  const { relations, status, error } = useSelector((state) => state.relations);
-  const { people, loading, error: peopleError } = useSelector((state) => state.people);
-
-  useEffect(() => {
-    dispatch(getRelations());
-    dispatch(getAllPeople());
-  }, []);
-  
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-  return (
-    <div className="wrapper">
-      <Sidebar isOpen={sidebarOpen} />
-      <div className="main">
-        <Navbar toggleSidebar={toggleSidebar} />
-        <MainContent data={relations} people={people} />
+  if (isLoading) {
+    return (
+      <div className="wrapper">
+        <div className="main">
+          <div className="splash active">
+            <div className="splash-icon"></div>
+          </div>
+        </div>
       </div>
-    </div>
-  )
+    );
+  }
+
+  return (
+    <Layout>
+      <MainContent data={relations} people={people} />
+    </Layout>
+  );
 }
+
+export default React.memo(Dashboard); // Memoize the Dashboard component

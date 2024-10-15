@@ -19,30 +19,25 @@ function MessageDropdown({ data }) {
                             <div className="position-relative">Logs</div>
                         </div>
                         <div className="list-group">
-                           {data[0].slice(0, 3).map((log,index) => (
-                            <a href="#" className="list-group-item" key={index}> {/* Use log.id for a unique key */}
-                                <div className="row no-gutters align-items-center">
-                                    <div className="col-10 pl-2" >
-                                        <div className="text-dark">{log.action}</div>
-                                        <div className="text-muted small mt-1">{new Date(log.timestamp).toLocaleString()}</div>
-                                    </div>
+                            {data[0] && data[0].length > 0 ? (
+                                data[0].slice(0, 3).map((log, index) => (
+                                    <a href="#" className="list-group-item" key={log.id || index}> {/* Prefer log.id if it exists */}
+                                        <div className="row no-gutters align-items-center">
+                                            <div className="col-10 pl-2">
+                                                <div className="text-dark">{log.action}</div>
+                                                <div className="text-muted small mt-1">{new Date(log.timestamp).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                ))
+                            ) : (
+                                <div className="row align-items-center justify-content-xl-center p-2">
+                                    <p>No logs available</p> 
                                 </div>
-                            </a>
-                        ))}
-                            {/* <a href="#" className="list-group-item">
-                                <div className="row no-gutters align-items-center">
-                                    <div className="col-2">
-                                        <img src="img/avatars/avatar-4.jpg" className="avatar img-fluid rounded-circle" alt="Daisy Seger" />
-                                    </div>
-                                    <div className="col-10 pl-2">
-                                        <div className="text-dark">Daisy Seger</div>
-                                        <div className="text-muted small mt-1">Aenean tellus metus, bibendum sed, posuere ac, mattis non.</div>
-                                        <div className="text-muted small mt-1">5h ago</div>
-                                    </div>
-                                </div>
-                            </a> */}
+                            )}
+                           
                         </div>
-                        <div className="dropdown-menu-footer">
+                        <div className="dropdown-menu-footer" style={{borderTop: "1px solid #dee2e6"}}>
                             <Link to="/log" className="text-muted">Show all logs</Link>
                         </div>
                     </div>

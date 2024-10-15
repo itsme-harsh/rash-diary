@@ -19,8 +19,8 @@ function SettingDropdown() {
                         <i className="align-middle fas fa-cog"></i>
                     </a>
                     <div className="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <a className="dropdown-item" href="#"><i className="align-middle mr-1 fas fa-fw fa-user"></i> View Profile</a>
-                        <a className="dropdown-item" href="#"><i className="align-middle mr-1 fas fa-fw fa-cogs"></i> Settings</a>
+                        <Link className="dropdown-item" to="/profile"><i className="align-middle mr-1 fas fa-fw fa-user"></i> View Profile</Link>
+                        {/* <Link className="dropdown-item" to="/s"><i className="align-middle mr-1 fas fa-fw fa-cogs"></i> Settings</a> */}
                         <div className="dropdown-divider"></div>
                         <Link className="dropdown-item" onClick={handleLogout}>
                             <i className="align-middle mr-1 fas fa-fw fa-arrow-alt-circle-right"></i> Sign out

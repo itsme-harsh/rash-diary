@@ -11,6 +11,11 @@ body {
     /* Your styles here */
     height: 90vh !important;
   }
+
+  .option-position{
+    right: 15px !important;
+    top: -15px !important;
+  }
 }
 
 body,
@@ -87,11 +92,17 @@ html {
   }
 }
 
-/* custom classes */
-.min-8rem {
-  min-width: 8.4rem !important;
+.option-position{
+  padding: 0px;
+  position: absolute;
+  right: -27px;
+  top: -30px;
 }
 
+/* custom classes */
+.min-8rem {
+  min-width: 5.55rem !important;
+}
 .rdt_TableRow:hover {
   background-color: #ededed !important;
 }
@@ -101,12 +112,14 @@ html {
   color: #f8285a;
   background-color: #ffeef3;
   font-weight: 600;
+  border: none;
 }
 
 .badge-success {
   color: #17c653;
   background-color: #dfffea;
   font-weight: 600;
+  border: none;
 }
 
 /* data table */
@@ -132,4 +145,5 @@ html {
 .ion-ios-arrow-dropleft-circle:before {
   font-size: 1.2em !important;
 }
+
 

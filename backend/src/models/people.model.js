@@ -1,34 +1,42 @@
 import mongoose from 'mongoose';
 
 const peopleSchema = new mongoose.Schema({
-  name: { 
-    type: String, 
-    required: true 
+  name: {
+    type: String,
+    required: true
   },
-  relationId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Relation', 
-    required: true 
+  profile: {
+    type: String,
+    default: null
   },
-  dob: { 
-    type: Date, 
-    required: false // Optional field
+  relationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Relation',
+    required: true
   },
-  reminder: { 
-    type: Boolean, 
+  dob: {
+    type: Date,
+    required: false, // Optional field
+    default: null
+  },
+  reminder: {
+    type: Boolean,
     default: true // Default value
   },
-  status: { 
-    type: String, 
-    required: false // Optional field
+  status: {
+    type: Boolean,
+    required: false, // Optional field
+    default: null
   },
-  type: { 
-    type: String, 
-    required: false // Optional field
+  type: {
+    type: String,
+    required: false, // Optional field
+    default: null
   },
-  city: { 
-    type: String, 
-    required: false // Optional field
+  city: {
+    type: String,
+    required: false, // Optional field
+    default: null
   }
 }, { timestamps: true });
 

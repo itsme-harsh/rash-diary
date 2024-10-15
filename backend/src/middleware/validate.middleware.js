@@ -2,10 +2,10 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const validate = (schema) => asyncHandler(async (req, res, next) => {
-    
+   
     try {
         if(req.file){
-            req.body.image = req.file.filename
+            req.body[req.file.fieldname] = req.file?.filename; 
         }
         await schema.validateAsync(req.body, { abortEarly: false });
         next();

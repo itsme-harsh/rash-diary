@@ -1,0 +1,35 @@
+@media print {
+  #print-p {
+    display: none;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  .sc-eUlrpB .hZZlND,
+  .rdt_Pagination {
+    overflow: hidden !important;
+  }
+
+  .hide-print,
+  [data-column-id="8"],
+  [data-column-id="9"],
+  .rdt_Pagination {
+    display: none !important;
+  }
+}
+
+[data-column-id="7"] {
+  text-align: center !important;
+}
+
+
+/* Custom styles for better appearance */
+.custom-radio:checked ~ .custom-control-label::before {
+  background-color: #28a745; /* Green for active */
+}
+
+.custom-radio:not(:checked) ~ .custom-control-label::before {
+  background-color: #dc3545; /* Red for inactive */
+}

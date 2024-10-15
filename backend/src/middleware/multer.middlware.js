@@ -12,6 +12,19 @@ const storage = multer.diskStorage({
     }
 })
 
+// Allowed image MIME types
+const imageMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+// Helper function for validating image files
+const FileFilter = (req, file, cb) => {
+    if (imageMimeTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only image files are allowed!"), false);
+    }
+};
+
 export const upload = multer({
+    fileFilter: FileFilter,
     storage,
 })

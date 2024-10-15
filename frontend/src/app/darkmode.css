@@ -1,0 +1,91 @@
+.sidebar-nav {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1;
+    background: #0d0d0d;
+}
+
+.sidebar-brand, .sidebar-brand:hover {
+    padding: 1rem;
+    background: #000000;
+    font-size: 1.175rem;
+    font-weight: 500;
+    color: #fff;
+    width: 100%;
+    display: block;
+    text-decoration: none;
+}
+
+.wrapper:before {
+    width: 100%;
+    height: 264px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* background: #153d77; */
+    background: #000;
+    content: " ";
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.5rem;
+    font-family: Jost, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #31a250;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 0.9375rem;
+    color: #3e4676;
+    text-align: left;
+    list-style: none;
+    background-color: #181818;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.2rem;
+}
+
+.dropdown-menu-header {
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 500;
+    border-bottom: 1px solid #494949;
+}
+
+body {
+    margin: 0;
+    font-family: Hind Vadodara, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #3e4676;
+    text-align: left;
+    background-color: #000;
+    /* background-color: #f4f7fc; */
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #181818;
+    background-clip: border-box;
+    border: 0 solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.2rem;
+}

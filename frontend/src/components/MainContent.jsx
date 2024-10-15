@@ -4,25 +4,45 @@ import React, { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 // import { useDispatch, useSelector } from "react-redux";
-
 // Register Chart.js elements
 Chart.register(ArcElement, Tooltip, Legend);
 
 // Register Chart.js elements
+const getRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+};
+
 const PieChart = ({ people }) => {
+    // Check if people is provided and has entries
+    if (!people || people.length === 0) {
+        return <p>No data available to display the chart</p>; // Fallback message
+    }
+
+    // Prepare filtered data for the Pie chart
+    const filteredData = people
+        .map(relation => ({
+            relationName: relation.relationName,
+            count: relation.people.length,
+        }))
+        .filter(relation => relation.count > 0); // Exclude zero counts
+
+    // Check if there's meaningful data to display
+    if (filteredData.length === 0) {
+        return <p>No meaningful data to display the chart</p>; // Fallback if all are empty
+    }
+
     // Prepare the data for the Pie chart
     const data = {
-        labels: people.map(relation => relation.relationName), // Extract relation names for labels
+        labels: filteredData.map(relation => relation.relationName), // Extract relation names for labels
         datasets: [
             {
-                data: people.map(relation => relation.people.length), // Extract number of people for data
-                backgroundColor: [
-                    '#007bff', // Colors for the slices
-                    '#ffc107',
-                    '#dc3545',
-                    '#E8EAED',
-                    '#28a745', // Additional colors as needed
-                ],
+                data: filteredData.map(relation => relation.count), // Use filtered counts
+                backgroundColor: filteredData.map(() => getRandomColor()), // Generate random colors
                 borderColor: 'transparent',
             },
         ],
@@ -37,6 +57,14 @@ const PieChart = ({ people }) => {
             legend: {
                 display: false, // Hide legend
             },
+            tooltip: {
+                callbacks: {
+                    label: function (tooltipItem) {
+                        // return tooltipItem.label + ': ' + tooltipItem.raw; // Customize tooltip
+                        return 'Total People' + ': ' + tooltipItem.raw; // Customize tooltip
+                    },
+                },
+            },
         },
     };
 
@@ -49,11 +77,11 @@ const PieChart = ({ people }) => {
 const MainContent = ({ data, people }) => {
 
     const totalPeople = people.reduce((total, relation) => {
-        return total + relation.people.length;
+        return total + (relation.people?.length || 0); // Default to 0 if people is undefined
     }, 0);
 
-
     return (
+
         <div className="container-fluid p-0 pt-5">
             <div className="header pl-3">
                 <h1 className="header-title">
@@ -79,7 +107,7 @@ const MainContent = ({ data, people }) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h1 className="mt-1 mb-3">{data.length}</h1>
+                                            <h1 className="mt-1 mb-3">{data.length || 0}</h1>
                                             <div className="mb-0">
                                                 <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i></span>
                                                 <span className="text-muted">Available categories, click to view</span>
@@ -90,7 +118,7 @@ const MainContent = ({ data, people }) => {
                             </div>
                             <div className="col-lg-4">
                                 <div className="card">
-                                    <Link to="/" style={{ textDecoration: "none" }}>
+                                    <Link to="/people" style={{ textDecoration: "none" }}>
                                         <div className="card-body custom-card-body">
                                             <div className="row">
                                                 <div className="col mt-0">
@@ -102,7 +130,7 @@ const MainContent = ({ data, people }) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h1 className="mt-1 mb-3">{totalPeople}</h1>
+                                            <h1 className="mt-1 mb-3">{totalPeople || 0}</h1>
                                             <div className="mb-0">
                                                 <span className="text-danger"> <i className="mdi mdi-arrow-bottom-right"></i></span>
                                                 <span className="text-muted">Available people, click to view</span>
@@ -276,20 +304,23 @@ const MainContent = ({ data, people }) => {
                                 </div>
                                 <table className="table mb-0">
                                     <tbody>
-                                        {
-                                        people.map((relation) => {
-                                            const peopleCount = relation.people.length;
-                                            const percentage = totalPeople > 0 ? ((peopleCount / totalPeople) * 100).toFixed(2) : 0;
+                                        {people
+                                            .filter(relation => relation.people.length > 0) // Filter out relations with no people
+                                            .map((relation) => {
+                                                const peopleCount = relation.people.length;
+                                                const percentage = totalPeople > 0 ? ((peopleCount / totalPeople) * 100).toFixed(2) : 0;
 
-                                            return (
-                                                <tr key={relation.relationId}>
-                                                    <td>{relation.relationName}</td>
-                                                    <td className="text-right">{percentage}%</td>
-                                                </tr>
-                                            );
-                                        })}
+                                                return (
+                                                    <tr key={relation.relationId}>
+                                                        <td>{relation.relationName}</td>
+                                                        <td className="text-right">{percentage}%</td>
+                                                    </tr>
+                                                );
+                                            })}
                                     </tbody>
                                 </table>
+
+
                             </div>
                         </div>
                     </div>
@@ -398,6 +429,7 @@ const MainContent = ({ data, people }) => {
             </div>
 
         </div>
+
     );
 };
 
