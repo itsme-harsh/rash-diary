@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
     setSidebarOpen(prev => !prev);
   }, []);
 
-  console.log("Layout")
+  // console.log("Layout")
 
   return (
     <div className="wrapper">
